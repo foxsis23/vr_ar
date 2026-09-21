@@ -55,7 +55,9 @@ namespace Lab2.EditorTools
 
             BuildInteractables();
             Lab2RoomBuilder.BuildShelf(new Vector3(-2.6f, 1.5f, 3.85f));
-            Lab2RoomBuilder.BuildHud(new Vector3(0f, 1.8f, 3.9f), Quaternion.Euler(0f, 180f, 0f));
+            // Канвас у World Space читається з боку, протилежного його forward,
+            // тому панель на північній стіні не розвертаємо.
+            Lab2RoomBuilder.BuildHud(new Vector3(0f, 1.8f, 3.9f), Quaternion.identity);
 
             SetupComfortVignette(rig, vignettePrefab);
 

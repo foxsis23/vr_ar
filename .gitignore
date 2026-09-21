@@ -43,3 +43,6 @@ sysinfo.txt
 *.unitypackage
 *.app
 crashlytics-build.properties
+
+# --- Lab screenshots (generated) ---
+/Screenshots/

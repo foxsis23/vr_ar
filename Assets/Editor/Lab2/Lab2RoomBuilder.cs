@@ -180,8 +180,8 @@ namespace Lab2.EditorTools
             canvasObject.AddComponent<CanvasScaler>();
 
             RectTransform canvasRect = canvasObject.GetComponent<RectTransform>();
-            canvasRect.sizeDelta = new Vector2(600f, 400f);
-            canvasRect.localScale = Vector3.one * 0.0035f;
+            canvasRect.sizeDelta = new Vector2(760f, 560f);
+            canvasRect.localScale = Vector3.one * 0.0032f;
 
             GameObject background = CreateUiImage("Background", canvasRect, new Color(0.08f, 0.10f, 0.14f, 0.85f));
             RectTransform backgroundRect = background.GetComponent<RectTransform>();
@@ -190,12 +190,12 @@ namespace Lab2.EditorTools
             backgroundRect.offsetMin = Vector2.zero;
             backgroundRect.offsetMax = Vector2.zero;
 
-            Text title = CreateUiText("Title", canvasRect, new Vector2(0f, 160f), new Vector2(560f, 60f), 34, FontStyle.Bold);
+            Text title = CreateUiText("Title", canvasRect, new Vector2(0f, 235f), new Vector2(700f, 50f), 34, FontStyle.Bold);
             title.text = "Лабораторна 2 — VR-сцена";
 
-            Text hints = CreateUiText("Hints", canvasRect, new Vector2(0f, 60f), new Vector2(560f, 140f), 24, FontStyle.Normal);
-            Text status = CreateUiText("Status", canvasRect, new Vector2(0f, -60f), new Vector2(560f, 80f), 24, FontStyle.Bold);
-            Text log = CreateUiText("Log", canvasRect, new Vector2(0f, -150f), new Vector2(560f, 120f), 20, FontStyle.Normal);
+            Text hints = CreateUiText("Hints", canvasRect, new Vector2(0f, 110f), new Vector2(700f, 190f), 24, FontStyle.Normal);
+            Text status = CreateUiText("Status", canvasRect, new Vector2(0f, -55f), new Vector2(700f, 80f), 24, FontStyle.Bold);
+            Text log = CreateUiText("Log", canvasRect, new Vector2(0f, -185f), new Vector2(700f, 170f), 20, FontStyle.Normal);
 
             VrHud hud = canvasObject.AddComponent<VrHud>();
             SerializedObject serialized = new SerializedObject(hud);
@@ -205,10 +205,11 @@ namespace Lab2.EditorTools
             serialized.ApplyModifiedPropertiesWithoutUndo();
 
             hints.text =
-                "Ліва/права рука: тригер — взяти предмет, відпустити — кинути\n" +
-                "Стік уперед + тригер — промінь телепортації (Teleport Area / Anchor)\n" +
-                "Лівий стік — плавний рух із затіненням периферії (Comfort Vignette)\n" +
-                "Правий стік — поворот ривками";
+                "Шолом: Grip — взяти предмет, відпустити — кинути; стік — рух і телепорт\n" +
+                "Симулятор: [ / ] — ліва/права рука, H — голова, права кнопка миші — огляд\n" +
+                "G — Grip (взяти), T — Trigger, I/J/K/L — стік контролера\n" +
+                "Стік уперед (I) — промінь телепортації, відпустити — телепорт\n" +
+                "Лівий стік — плавний рух із затіненням периферії, правий — поворот ривками";
 
             return hud;
         }
