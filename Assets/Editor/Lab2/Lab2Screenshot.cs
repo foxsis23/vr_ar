@@ -2,6 +2,7 @@ using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 namespace Lab2.EditorTools
 {
@@ -37,6 +38,8 @@ namespace Lab2.EditorTools
             Camera camera = cameraObject.AddComponent<Camera>();
             camera.fieldOfView = 70f;
             camera.nearClipPlane = 0.05f;
+            // Без даних URP камера рендерить сцену вбудованим конвеєром і кольори матеріалів губляться.
+            cameraObject.AddComponent<UniversalAdditionalCameraData>();
 
             RenderTexture target = new RenderTexture(Width, Height, 24, RenderTextureFormat.ARGB32);
             Texture2D image = new Texture2D(Width, Height, TextureFormat.RGB24, false);
