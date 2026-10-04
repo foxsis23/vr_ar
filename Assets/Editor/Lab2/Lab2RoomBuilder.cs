@@ -180,22 +180,33 @@ namespace Lab2.EditorTools
             canvasObject.AddComponent<CanvasScaler>();
 
             RectTransform canvasRect = canvasObject.GetComponent<RectTransform>();
-            canvasRect.sizeDelta = new Vector2(760f, 560f);
-            canvasRect.localScale = Vector3.one * 0.0032f;
+            canvasRect.sizeDelta = new Vector2(820f, 640f);
+            canvasRect.localScale = Vector3.one * 0.003f;
 
-            GameObject background = CreateUiImage("Background", canvasRect, new Color(0.08f, 0.10f, 0.14f, 0.85f));
-            RectTransform backgroundRect = background.GetComponent<RectTransform>();
-            backgroundRect.anchorMin = Vector2.zero;
-            backgroundRect.anchorMax = Vector2.one;
-            backgroundRect.offsetMin = Vector2.zero;
-            backgroundRect.offsetMax = Vector2.zero;
+            GameObject background = CreateUiImage("Background", canvasRect, new Color(0.08f, 0.10f, 0.14f, 0.88f));
+            Stretch(background.GetComponent<RectTransform>());
 
-            Text title = CreateUiText("Title", canvasRect, new Vector2(0f, 235f), new Vector2(700f, 50f), 34, FontStyle.Bold);
+            // Вертикальний layout: блоки тексту розсуваються самі, скільки б рядків не переносилось.
+            GameObject content = new GameObject("Content", typeof(RectTransform));
+            content.transform.SetParent(canvasRect, false);
+            RectTransform contentRect = content.GetComponent<RectTransform>();
+            Stretch(contentRect);
+
+            VerticalLayoutGroup layout = content.AddComponent<VerticalLayoutGroup>();
+            layout.padding = new RectOffset(30, 30, 24, 24);
+            layout.spacing = 18f;
+            layout.childAlignment = TextAnchor.UpperCenter;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = false;
+
+            Text title = CreateUiText("Title", contentRect, 34, FontStyle.Bold);
             title.text = "Лабораторна 2 — VR-сцена";
 
-            Text hints = CreateUiText("Hints", canvasRect, new Vector2(0f, 110f), new Vector2(700f, 190f), 24, FontStyle.Normal);
-            Text status = CreateUiText("Status", canvasRect, new Vector2(0f, -55f), new Vector2(700f, 80f), 24, FontStyle.Bold);
-            Text log = CreateUiText("Log", canvasRect, new Vector2(0f, -185f), new Vector2(700f, 170f), 20, FontStyle.Normal);
+            Text hints = CreateUiText("Hints", contentRect, 24, FontStyle.Normal);
+            Text status = CreateUiText("Status", contentRect, 24, FontStyle.Bold);
+            Text log = CreateUiText("Log", contentRect, 20, FontStyle.Normal);
 
             VrHud hud = canvasObject.AddComponent<VrHud>();
             SerializedObject serialized = new SerializedObject(hud);
@@ -283,14 +294,10 @@ namespace Lab2.EditorTools
             return image;
         }
 
-        private static Text CreateUiText(string name, RectTransform parent, Vector2 anchoredPosition, Vector2 size, int fontSize, FontStyle style)
+        private static Text CreateUiText(string name, RectTransform parent, int fontSize, FontStyle style)
         {
             GameObject textObject = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(Text));
             textObject.transform.SetParent(parent, false);
-
-            RectTransform rect = textObject.GetComponent<RectTransform>();
-            rect.anchoredPosition = anchoredPosition;
-            rect.sizeDelta = size;
 
             Text text = textObject.GetComponent<Text>();
             text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
@@ -300,7 +307,19 @@ namespace Lab2.EditorTools
             text.color = Color.white;
             text.horizontalOverflow = HorizontalWrapMode.Wrap;
             text.verticalOverflow = VerticalWrapMode.Overflow;
+
+            // Висота блоку рахується з реального тексту, тому сусідні блоки не перекриваються.
+            ContentSizeFitter fitter = textObject.AddComponent<ContentSizeFitter>();
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
             return text;
+        }
+
+        private static void Stretch(RectTransform rect)
+        {
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
         }
 
         private static void EnsureFolder()
