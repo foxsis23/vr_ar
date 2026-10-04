@@ -83,6 +83,22 @@ namespace Lab3
             ShowWizard();
         }
 
+        /// <summary>
+        /// Вмикає або вимикає гарячу клавішу відкриття планшета.
+        /// Потрібно на час набору тексту: літера «m» у полі введення інакше закрила б панель.
+        /// </summary>
+        public void SetMenuShortcutEnabled(bool isEnabled)
+        {
+            if (isEnabled)
+            {
+                toggleAction.Enable();
+            }
+            else
+            {
+                toggleAction.Disable();
+            }
+        }
+
         private void Awake()
         {
             toggleAction = BuildToggleAction();

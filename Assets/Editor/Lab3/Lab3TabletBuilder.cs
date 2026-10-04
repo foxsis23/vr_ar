@@ -34,7 +34,7 @@ namespace Lab3.EditorTools
             Text tabHint = Lab3UiFactory.CreateText("Tab Hint", column, string.Empty, 22, FontStyle.Italic, TextAnchor.UpperCenter);
 
             GameObject wizardScreen = BuildWizardScreen(column, out InspectionWizard wizard);
-            GameObject formScreen = BuildFormScreen(column, network);
+            GameObject formScreen = BuildFormScreen(column, network, out Text inputHint);
 
             SpatialTablet tablet = root.AddComponent<SpatialTablet>();
             Lab3Serialized.For(tablet)
@@ -52,6 +52,13 @@ namespace Lab3.EditorTools
             // Кнопка «Закрити» ховає панель — її ж повертає кнопка Menu на контролері.
             CloseButtonBinder binder = closeTab.gameObject.AddComponent<CloseButtonBinder>();
             Lab3Serialized.For(binder).Reference("tablet", tablet).Apply();
+
+            // Поки активне поле введення, клавіатура належить формі, а не симулятору.
+            FormInputLock inputLock = root.AddComponent<FormInputLock>();
+            Lab3Serialized.For(inputLock)
+                .Reference("tablet", tablet)
+                .Reference("hintText", inputHint)
+                .Apply();
 
             canvas.gameObject.SetActive(false);
             return tablet;
@@ -103,7 +110,7 @@ namespace Lab3.EditorTools
             return screen.gameObject;
         }
 
-        private static GameObject BuildFormScreen(RectTransform parent, PipelineNetwork network)
+        private static GameObject BuildFormScreen(RectTransform parent, PipelineNetwork network, out Text inputHint)
         {
             RectTransform screen = Lab3UiFactory.CreateColumn("Form Screen", parent, 10f, new RectOffset(0, 0, 0, 0));
 
@@ -134,6 +141,7 @@ namespace Lab3.EditorTools
             Button reset = Lab3UiFactory.CreateButton("Reset", actions, "Скинути", 22, 76f, out _);
             Button save = Lab3UiFactory.CreateButton("Save", actions, "Зберегти", 22, 76f, out _);
 
+            inputHint = Lab3UiFactory.CreateText("Input Hint", screen, string.Empty, 20, FontStyle.Italic, TextAnchor.UpperLeft);
             Text status = Lab3UiFactory.CreateText("Status", screen, string.Empty, 22, FontStyle.Normal, TextAnchor.UpperLeft);
 
             LeakReportForm form = screen.gameObject.AddComponent<LeakReportForm>();
