@@ -52,10 +52,11 @@ namespace Lab4.EditorTools
 
             ToggleSwitch3D power = BuildPowerSwitch(root.transform, new Vector3(-0.3f, DeskHeight + 0.04f, 0f));
             PokeSlider slider = BuildSlider(root.transform, new Vector3(0.05f, DeskHeight + 0.05f, 0f));
+            // Підписи кнопок рознесені по висоті: стоячи збоку, оператор бачить їх одна над одною.
             PokePushButton start = BuildButton(root.transform, "Start Button", "ПУСК опресовки",
-                new Vector3(0.38f, DeskHeight + 0.04f, 0.12f), new Color(0.20f, 0.65f, 0.30f));
+                new Vector3(0.38f, DeskHeight + 0.04f, 0.12f), new Color(0.20f, 0.65f, 0.30f), 0.26f);
             PokePushButton reset = BuildButton(root.transform, "Reset Button", "СКИД",
-                new Vector3(0.38f, DeskHeight + 0.04f, -0.14f), new Color(0.80f, 0.35f, 0.20f));
+                new Vector3(0.38f, DeskHeight + 0.04f, -0.14f), new Color(0.80f, 0.35f, 0.20f), 0.5f);
             Renderer lamp = BuildStatusLamp(root.transform, new Vector3(-0.55f, DeskHeight + 0.12f, 0f));
 
             return new ControlRig(root, power, slider, start, reset, lamp);
@@ -90,7 +91,7 @@ namespace Lab4.EditorTools
                 new Vector3(0.035f, 0.09f, 0.035f), Lab4Materials.Accent, lever.transform);
             Object.DestroyImmediate(leverBody.GetComponent<Collider>());
 
-            Text label = BuildLabel(switchObject.transform, "Живлення стенда: ВИМК.", new Vector3(0f, 0.3f, 0f));
+            Text label = BuildLabel(switchObject.transform, "Живлення стенда: ВИМК.", new Vector3(0f, 0.26f, 0f));
 
             BoxCollider collider = ClearColliders(switchObject);
             collider.center = new Vector3(0f, 0.05f, 0f);
@@ -125,7 +126,7 @@ namespace Lab4.EditorTools
                 new Vector3(0.05f, 0.05f, 0.08f), Lab4Materials.Accent, sliderObject.transform);
             Object.DestroyImmediate(handle.GetComponent<Collider>());
 
-            Text label = BuildLabel(sliderObject.transform, "Тиск опресовки: 4,0 бар", new Vector3(0f, 0.3f, 0f));
+            Text label = BuildLabel(sliderObject.transform, "Тиск опресовки: 4,0 бар", new Vector3(0f, 0.38f, 0f));
 
             BoxCollider collider = sliderObject.AddComponent<BoxCollider>();
             collider.center = new Vector3(0f, 0.03f, 0f);
@@ -150,7 +151,13 @@ namespace Lab4.EditorTools
         }
 
         /// <summary>Об'ємна кнопка: корпус із колайдером дотику та ковпачок, що просідає.</summary>
-        private static PokePushButton BuildButton(Transform parent, string name, string caption, Vector3 position, Color color)
+        private static PokePushButton BuildButton(
+            Transform parent,
+            string name,
+            string caption,
+            Vector3 position,
+            Color color,
+            float labelHeight)
         {
             GameObject buttonObject = new GameObject(name);
             buttonObject.transform.SetParent(parent, false);
@@ -165,7 +172,7 @@ namespace Lab4.EditorTools
                 buttonObject.transform);
             Object.DestroyImmediate(cap.GetComponent<Collider>());
 
-            BuildLabel(buttonObject.transform, caption, new Vector3(0f, 0.26f, 0f));
+            BuildLabel(buttonObject.transform, caption, new Vector3(0f, labelHeight, 0f));
 
             BoxCollider collider = buttonObject.AddComponent<BoxCollider>();
             collider.center = new Vector3(0f, 0.03f, 0f);
@@ -219,9 +226,11 @@ namespace Lab4.EditorTools
         /// <summary>Підпис органа керування — невеликий World-Space Canvas над ним.</summary>
         private static Text BuildLabel(Transform parent, string caption, Vector3 localPosition)
         {
-            Canvas canvas = Lab3UiFactory.CreateWorldCanvas("Label", parent, new Vector2(620f, 140f), 0.0006f);
+            Canvas canvas = Lab3UiFactory.CreateWorldCanvas("Label", parent, new Vector2(460f, 130f), 0.00045f);
             canvas.transform.localPosition = localPosition;
-            canvas.transform.localRotation = Quaternion.Euler(20f, 180f, 0f);
+            // Канвас у World Space читається з боку, протилежного його forward: нахил по X
+            // розвертає підпис до оператора, а зайвий поворот на 180° дав би дзеркальний текст.
+            canvas.transform.localRotation = Quaternion.Euler(25f, 0f, 0f);
 
             RectTransform canvasRect = canvas.GetComponent<RectTransform>();
             Lab3UiFactory.CreatePanel("Background", canvasRect, Lab3UiFactory.PanelColor);

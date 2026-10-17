@@ -85,7 +85,7 @@ namespace Lab4.EditorTools
             for (int index = 0; index < Specs.Length; index++)
             {
                 PartSpec spec = Specs[index];
-                sockets.Add(BuildSocket(node.transform, spec));
+                sockets.Add(BuildSocket(node.transform, spec, index));
                 parts.Add(BuildPart(root.transform, spec, trayX + index * 0.32f));
             }
 
@@ -148,7 +148,7 @@ namespace Lab4.EditorTools
         /// Монтажний паз: <see cref="XRSocketInteractor"/> з кільцем-індикатором і підписом.
         /// Деталь фіксується в позиції attachTransform, щойно її відпускають поруч.
         /// </summary>
-        private static AssemblySocket BuildSocket(Transform node, PartSpec spec)
+        private static AssemblySocket BuildSocket(Transform node, PartSpec spec, int index)
         {
             GameObject socketObject = new GameObject($"Socket {spec.SlotName}");
             socketObject.transform.SetParent(node, false);
@@ -171,7 +171,8 @@ namespace Lab4.EditorTools
             socket.showInteractableHoverMeshes = false;
             socket.hoverSocketSnapping = true;
 
-            Text label = BuildSocketLabel(socketObject.transform, spec.SlotName);
+            // Сусідні пази стоять за 0,3 м, тому підписи чергуються по висоті й не перекриваються.
+            Text label = BuildSocketLabel(socketObject.transform, spec.SlotName, 0.3f + (index % 2) * 0.13f);
 
             AssemblySocket component = socketObject.AddComponent<AssemblySocket>();
             Lab3Serialized.For(component)
@@ -184,17 +185,19 @@ namespace Lab4.EditorTools
             return component;
         }
 
-        private static Text BuildSocketLabel(Transform parent, string slotName)
+        private static Text BuildSocketLabel(Transform parent, string slotName, float height)
         {
-            Canvas canvas = Lab3UiFactory.CreateWorldCanvas("Slot Label", parent, new Vector2(520f, 160f), 0.0006f);
-            canvas.transform.localPosition = new Vector3(0f, 0.3f, -0.05f);
-            canvas.transform.localRotation = Quaternion.Euler(20f, 180f, 0f);
+            Canvas canvas = Lab3UiFactory.CreateWorldCanvas("Slot Label", parent, new Vector2(440f, 150f), 0.0005f);
+            canvas.transform.localPosition = new Vector3(0f, height, -0.08f);
+            // Канвас у World Space читається з боку, протилежного його forward: нахил по X
+            // розвертає підпис до оператора, а зайвий поворот на 180° дав би дзеркальний текст.
+            canvas.transform.localRotation = Quaternion.Euler(25f, 0f, 0f);
 
             RectTransform canvasRect = canvas.GetComponent<RectTransform>();
             Lab3UiFactory.CreatePanel("Background", canvasRect, Lab3UiFactory.PanelColor);
 
             RectTransform column = Lab3UiFactory.CreateColumn("Content", canvasRect, 6f, new RectOffset(16, 16, 12, 12));
-            return Lab3UiFactory.CreateText("Text", column, $"{slotName}\nочікується деталь", 26, FontStyle.Bold, TextAnchor.UpperCenter);
+            return Lab3UiFactory.CreateText("Text", column, $"{slotName}\nочікується деталь", 24, FontStyle.Bold, TextAnchor.UpperCenter);
         }
 
         /// <summary>Лоток із деталями: звідси їх беруть жестом щипка.</summary>
