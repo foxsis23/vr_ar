@@ -20,6 +20,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Lab3_SpatialUI.unity
     guid: bdd48a4a3cda5440aa2f4b0ddf343adc
+  - enabled: 1
+    path: Assets/Scenes/Lab4_HandTracking.unity
+    guid: 0ce89db3640594a97a7ff08179ff82bc
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 6d7da9640279249cb9b413432e08ee61, type: 2}
     com.unity.xr.openxr.settings4: {fileID: 11400000, guid: 2df3c2fd4f4454cdaa5d1300ce62dddc, type: 2}
