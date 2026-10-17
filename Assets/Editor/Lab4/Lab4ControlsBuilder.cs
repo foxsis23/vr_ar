@@ -128,12 +128,16 @@ namespace Lab4.EditorTools
 
             Text label = BuildLabel(sliderObject.transform, "Тиск опресовки: 4,0 бар", new Vector3(0f, 0.38f, 0f));
 
+            // Колайдер не тригерний: XRPokeInteractor за замовчуванням ігнорує тригери
+            // (physicsTriggerInteraction = Ignore), і палець просто не бачив би напрямну.
             BoxCollider collider = sliderObject.AddComponent<BoxCollider>();
-            collider.center = new Vector3(0f, 0.03f, 0f);
-            collider.size = new Vector3(0.36f, 0.1f, 0.12f);
-            collider.isTrigger = true;
+            collider.center = new Vector3(0f, 0.04f, 0f);
+            collider.size = new Vector3(0.36f, 0.14f, 0.14f);
 
-            sliderObject.AddComponent<XRSimpleInteractable>();
+            XRSimpleInteractable interactable = sliderObject.AddComponent<XRSimpleInteractable>();
+            // Без XRPokeFilter інтерактабл не потрапляє в поле зору пальця взагалі:
+            // XRPokeInteractor має requirePokeFilter = true.
+            AddPokeFilter(sliderObject, interactable, collider);
 
             PokeSlider component = sliderObject.AddComponent<PokeSlider>();
             Lab3Serialized.For(component)
