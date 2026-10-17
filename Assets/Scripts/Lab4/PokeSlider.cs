@@ -50,12 +50,16 @@ namespace Lab4
         {
             interactable.hoverEntered.AddListener(HandleHoverEntered);
             interactable.hoverExited.AddListener(HandleHoverExited);
+            interactable.selectEntered.AddListener(HandleSelectEntered);
+            interactable.selectExited.AddListener(HandleSelectExited);
         }
 
         private void OnDisable()
         {
             interactable.hoverEntered.RemoveListener(HandleHoverEntered);
             interactable.hoverExited.RemoveListener(HandleHoverExited);
+            interactable.selectEntered.RemoveListener(HandleSelectEntered);
+            interactable.selectExited.RemoveListener(HandleSelectExited);
         }
 
         private void Update()
@@ -110,6 +114,26 @@ namespace Lab4
         private void HandleHoverExited(HoverExitEventArgs args)
         {
             if (args.interactorObject is XRPokeInteractor)
+            {
+                follow = null;
+            }
+        }
+
+        /// <summary>
+        /// Натискання пальцем теж веде повзунок: палець може «продавити» напрямну
+        /// раніше, ніж спрацює наведення, і без цього слайдер завмер би.
+        /// </summary>
+        private void HandleSelectEntered(SelectEnterEventArgs args)
+        {
+            if (args.interactorObject is XRPokeInteractor poke)
+            {
+                follow = poke.attachTransform != null ? poke.attachTransform : poke.transform;
+            }
+        }
+
+        private void HandleSelectExited(SelectExitEventArgs args)
+        {
+            if (args.interactorObject is XRPokeInteractor && !interactable.isHovered)
             {
                 follow = null;
             }
